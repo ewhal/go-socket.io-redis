@@ -30,6 +30,8 @@ type broadcast struct {
 //   "port": "6379"
 //   "prefix": "socket.io"
 // }
+
+// Redis ...
 func Redis(opts map[string]string) socketio.BroadcastAdaptor {
   b := broadcast {
     rooms: cmap_string_cmap.New(),
@@ -98,6 +100,7 @@ func Redis(opts map[string]string) socketio.BroadcastAdaptor {
   return b
 }
 
+// onmessage ...
 func (b broadcast) onmessage(channel string, data []byte) error {
   pieces := strings.Split(channel, "#");
   uid := pieces[len(pieces) - 1]
@@ -136,6 +139,7 @@ func (b broadcast) onmessage(channel string, data []byte) error {
   return nil
 }
 
+// Join join a room
 func (b broadcast) Join(room string, socket socketio.Socket) error {
   sockets, ok := b.rooms.Get(room)
   if !ok {
@@ -146,6 +150,7 @@ func (b broadcast) Join(room string, socket socketio.Socket) error {
   return nil
 }
 
+// Leave a room
 func (b broadcast) Leave(room string, socket socketio.Socket) error {
   sockets, ok := b.rooms.Get(room)
   if !ok {
@@ -160,7 +165,7 @@ func (b broadcast) Leave(room string, socket socketio.Socket) error {
   return nil
 }
 
-// Same as Broadcast
+// Send sends a message 
 func (b broadcast) Send(ignore socketio.Socket, room, message string, args ...interface{}) error {
   sockets, ok := b.rooms.Get(room)
   if !ok {
@@ -195,4 +200,9 @@ func (b broadcast) Send(ignore socketio.Socket, room, message string, args ...in
   }
   b.remote = false
   return nil
+}
+
+// Len returns len of a string
+func (b broadcast) Len(s string) int {
+	return len(s)
 }
